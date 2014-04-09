@@ -1,0 +1,344 @@
+html,body{
+font-family: 'Lato',sans-serif;
+color: #808080;
+font-size: 14px;
+font-weight: normal;
+line-height: 24px;
+padding:0;
+margin:0;
+height:100%;
+width:100%;
+}
+h1 ,h2,h3,h4 ,h5{
+color:#2d2d29;
+}
+a{
+/*transition: all 300ms linear 0s;*/
+color:#4BBCD7;
+text-decoration:none;
+}
+a:hover{
+color: #2d2d29;
+text-decoration:none;
+}
+#page{
+ padding-top:10px;
+ padding-bottom:10px;
+}
+#page_wrapper{
+width:1200px;
+margin:0 auto;
+border:1px solid #ccc;
+box-shadow: 1px 0px 10px #ccc;
+}
+#header{
+background:#4BBCD7;
+height:80px;
+width:100%;
+}
+.header_main {
+width:1024px;
+margin:0 auto;
+}
+.logo{
+width:300px;
+height:80px;
+float:left;
+margin-right:300px;
+line-height:80px;
+}
+
+.logo a{
+font-size:30px;
+color:#fff;
+
+}
+
+#block-user-login h2{
+display:none;
+}
+#block-user-login .form-item{
+float:left;
+margin-right:15px;
+}
+#block-user-login .item-list{
+display:none;
+}
+#block-user-login #edit-actions{
+margin:0px;
+padding-top:38px;
+}
+#block-user-login .form-item label{
+font-size:11px;
+color:#fff;
+}
+#block-user-login .form-item label span{
+display:none;
+}
+#block-user-login .form-item input{
+border:1px solid #808080;
+width:150px;
+padding:3px 0px 3px 0px;
+}
+#block-user-login .form-submit{
+font-weight:bold;
+    padding:2px 5px;
+    text-align: center;
+ border: 1px solid;
+    border-radius: 5px;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    letter-spacing: 1px;
+    position: relative;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+ background: -moz-linear-gradient(center top , #67AE55, #578843) repeat scroll 0 0 #69A74E;
+    border-color: #3B6E22 #3B6E22 #2C5115;
+    box-shadow: 0 1px 1px #A4E388 inset;
+background: -webkit-gradient(linear, center top, center bottom, from(#67ae55), to(#578843));
+background: -webkit-linear-gradient(top, #67ae55, #578843);
+background-color: #69a74e;
+-webkit-box-shadow: inset 0 1px 1px #a4e388;
+
+}
+
+#footer{
+height:40px;
+background:#4BBCD7;
+}
+#footer .footer_main{
+width:1024px;
+margin:0 auto;
+
+}
+
+.footer_main{
+padding-top:10px;
+}
+#block-menu-menu-footer-menu{
+width:650px;
+float:left;
+}
+#block-block-2{
+width:374px;
+float:left;
+height:30px;
+}
+#block-block-2 p{
+margin:0px;
+color:#fff;
+font-weight:bold;
+}
+#block-menu-menu-footer-menu h2{
+display:none;
+}
+.footer_main  ul.menu{
+padding:0px;
+margin:0px;
+}
+.footer_main  ul li{
+list-style-type:none;
+list-style-image:none;
+float:left;
+padding:0px;
+line-height:15px;
+border-right:2px solid #fff;
+padding-right:5px;
+
+margin-left:5px;
+}
+.footer_main  ul.menu li a{
+font-weight:bold;
+color:#fff;
+}
+
+.footer_main  ul li.last{
+border-right:none;
+}
+.footer_main  ul li a.active{
+color:#fff;
+}
+
+#center{
+width:1024px;
+margin:0 auto;
+}
+#middle{
+overflow:hidden;
+}
+#block-orlounge-join{
+width:580px;
+float:left;
+}
+
+.dt-sc-ico-content.type3 {
+    padding: 0 0 30px 110px;
+    position: relative;
+    width: auto;
+}
+
+.dt-sc-ico-content.type3 h5 a{
+font-size:16px;
+color:#2d2d29;
+}
+
+.dt-sc-ico-content.type3 h5 a:hover{
+-webkit-transition: all 300ms linear;
+-moz-transition: all 300ms linear;
+-o-transition: all 300ms linear;
+-ms-transition: all 300ms linear;
+transition: all 300ms linear;
+color:#4BBCD7;
+}
+
+.dt-sc-ico-content.type3 .icon {
+    left: 0;
+    position: absolute;
+}
+
+.dt-sc-ico-content.type3 .icon span {
+    border: 3px solid;
+    border-radius: 80px;
+    color: #FFFFFF;
+    display: inline-block;
+    font-size: 30px;
+    height: 84px;
+    line-height: 85px;
+    margin-bottom: 15px;
+    text-align: center;
+-webkit-transition: all 300ms linear;
+-moz-transition: all 300ms linear;
+-o-transition: all 300ms linear;
+-ms-transition: all 300ms linear;
+transition: all 300ms linear;
+    width: 84px;
+background: none repeat scroll 0 0 #4BBCD7;
+border-color: #0390B2;
+}
+.dt-sc-ico-content.type3:hover .icon span {
+-moz-transform: scale(1) rotate(360deg) translate(0px); 
+-webkit-transform: scale(1) rotate(360deg) translate(0px); 
+-o-transform: scale(1) rotate(360deg) translate(0px); 
+transform: scale(1) rotate(360deg) translate(0px); 
+}
+.fa-hospital-o:before{
+    content: "\e600";
+}
+.fa-ambulance:before{
+    content: "\e601";
+}
+.fa-medkit:before{
+    content: "\e602";
+}
+#block-orlounge-welcome h2{
+font-weight:normal;
+font-size:24px;
+}
+
+#block-orlounge-home-register-form{
+width:390px;
+float:left;
+margin-left:54px;
+}
+#block-orlounge-home-register-form h2{
+background:#4BBCD7;
+color:#fff;
+margin:0px;
+height:45px;
+line-height:45px;
+padding-left:20px;
+
+}
+#block-orlounge-home-register-form .content{
+background:#f3f4f5;
+padding:15px 20px 15px 20px;
+}
+#block-orlounge-home-register-form .content select{
+padding:15px ;
+border:1px solid #ccc;
+width:350px;
+color:#808080;
+background-color: #fafafa;
+}
+#block-orlounge-home-register-form .content .form-item input{
+width:328px;
+border:1px solid #ccc;
+padding:10px;
+color:#ccc;
+background:#fafafa;
+}
+#block-orlounge-home-register-form .content .form-actions{
+overflow:hidden;
+}
+#block-orlounge-home-register-form .content .form-actions input{
+background-color: #4BBCD7;
+  border: medium none;
+    color: #FFFFFF;
+    cursor: pointer;
+    float: right;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 10px 0 0;
+    padding: 11px 20px;
+    text-transform: uppercase;
+-webkit-transition: all 300ms linear;
+-moz-transition: all 300ms linear;
+-o-transition: all 300ms linear;
+-ms-transition: all 300ms linear;
+transition: all 300ms linear;
+
+}
+
+#block-orlounge-home-register-form .content .form-actions input:hover {
+    background-color: #808080;
+}
+#block-orlounge-home-faq{
+clear:both;
+overflow:hidden;
+}
+
+#block-orlounge-home-faq .home_content .col{
+width:300px;
+float:left;
+margin:20px 30px 20px 0px;
+}
+#block-orlounge-home-faq .home_content .col .title{
+color:#2d2d29;
+font-weight:bold;
+line-height:30px;
+}
+#block-orlounge-home-faq .home_content .col .link{
+text-align:right;
+}
+#block-orlounge-home-faq .home_content .col .link a{
+-webkit-transition: all 300ms linear;
+-moz-transition: all 300ms linear;
+-o-transition: all 300ms linear;
+-ms-transition: all 300ms linear;
+transition: all 300ms linear;
+}
+#welcome_page{
+width:800px;
+margin:0 auto;
+}
+#welcome_page h1{
+text-align:center;
+}
+
+#welcome_page .block{
+width:300px;
+padding:10px;
+float:left;
+border:1px solid #ccc;
+height:300px;
+margin:50px 50px 50px 20px;
+}
+#welcome_page .block h4{
+ margin:0px;
+height:40px;
+line-height:40px;
+text-align:center;
+font-size:20px;
+font-weight:normal;
+}
+

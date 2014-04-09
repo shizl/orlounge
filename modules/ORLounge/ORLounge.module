@@ -1,0 +1,214 @@
+<?php 
+
+function ORLounge_menu(){
+  $items['register/%/welcome'] = array(
+     'page callback' => 'registration_welcome',
+     'access callback' =>true,
+     'page arguments' => array(1),
+  );
+  return $items;
+}
+
+function ORLounge_block_info() {
+
+  $blocks['welcome'] = array(
+    'info' => t('Welcome to Orlounge'),
+    'region' => -1,
+    'status' => TRUE,
+  );
+  $blocks['join'] = array(
+    'info' => t('Join ORLounge to'),
+    'region' => -1,
+    'status' => TRUE,
+  );
+  $blocks['home_faq'] = array(
+    'info' => t('Home FAQ'),
+    'region' => -1,
+    'status' => TRUE,
+  );
+  $blocks['home_register_form'] = array(
+    'info' => t('Register form block'),
+    'region' => -1,
+    'status' => TRUE,
+  );
+  return $blocks;
+
+}
+
+function ORLounge_block_view($delta='') {
+   $block = array();
+  switch($delta) {
+    case 'welcome':
+      $block['subject'] = 'Welcome to Orlounge';
+      $block['content'] = block_welcome_content();
+      break;
+    case 'join':
+      $block['subject'] = 'Join ORLounge to';
+      $block['content'] = block_join_content();
+      break;
+    case 'home_faq':
+      $block['content'] = block_home_faq_content();
+      break;
+    case 'home_register_form':
+      $block['subject'] = 'Join for free';
+      $block['content'] = drupal_get_form('block_register_form');
+      break;
+   }
+   return $block;
+}
+
+function block_welcome_content(){
+   $output = t('ORLOUNGE is a free community sites, where doctors, nurses, and administrators who work together in the operating room, come together to share their experiences in their own private lounges');
+  
+ return $output; 
+}
+function block_join_content(){
+
+   $output = '<div class="dt-sc-ico-content  type3"><div class="icon"> <span class="fa fa-hospital-o"> </span> </div><h5><a target="_blank" href="#"> Great Infrastructure </a></h5><p>Nunc at pretium est curabitur commodo leac est venenatis egestas sed aliquet auguevelit.</p></div>
+<div class="dt-sc-ico-content  type3"><div class="icon"> <span class="fa fa-ambulance"> </span> </div><h5><a target="_blank" href="#"> 24/7 Ambulance Services </a></h5><p>Nunc at pretium est curabitur commodo leac est venenatis egestas sed aliquet auguevelit.</p></div>
+<div class="dt-sc-ico-content  type3"><div class="icon"> <span class="fa fa-medkit"> </span> </div><h5><a target="_blank" href="#"> Cutting Edge Technology </a></h5><p>Nunc at pretium est curabitur commodo leac est venenatis egestas sed aliquet auguevelit.</p></div>';
+  
+ return $output; 
+}
+function block_home_faq_content(){
+
+   $output = '<div class="home_content">
+<div class="col"><div class="title">Professional of the operating room</div><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam laoreet in velit in mattis. Morbi vel solicitudin erat, non semper lacus</div><div class="link"><a href="#">Learn more</a></div></div><div class="col"><div class="title">Orlounge is free to use </div><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam laoreet in velit in mattis. Morbi vel solicitudin erat, non semper lacus</div><div class="link"><a href="#">Learn more</a></div></div><div class="col"><div class="title">Need Help ?</div><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam laoreet in velit in mattis. Morbi vel solicitudin erat, non semper lacus</div><div class="link"><a href="#">Learn more</a></div></div>
+</div>';
+  
+ return $output; 
+}
+
+
+function block_register_form($form, &$form_state){
+  $form['department'] = array(
+	'#type'=>'select',
+	'#options'=>array(
+			'0'=>'Select Department',
+			'Gynacelogy'=>'Gynacelogy',
+			'Blood Bank'=>'Blood Bank',
+			'Ophthalmology'=>'Ophthalmology',
+			'Oncology'=>'Oncology'
+			),
+	'#default_value'=>0,
+   );
+  $form['firstname'] = array(
+	'#type'=>'textfield',
+	'#maxlength'=>30,
+	'#size'=>30,
+	'#default_value'=>'Your First Name (required)',
+  );
+  $form['lastname'] = array(
+	'#type'=>'textfield',
+	'#maxlength'=>30,
+	'#size'=>30,
+	'#default_value'=>'Your Last Name',
+  );
+  $form['email'] = array(
+	'#type'=>'textfield',
+	'#maxlength'=>30,
+	'#size'=>30,
+	'#default_value'=>'Your Email (required)',
+  );
+  $form['password'] = array(
+	'#type'=>'password',
+	'#maxlength'=>30,
+	'#size'=>30,
+	'#required'=>true,
+	'#description'=>t('Your password'),
+  );
+  $form['password_confirm'] = array(
+	'#type'=>'password',
+	'#maxlength'=>30,
+	'#size'=>30,
+
+	'#description'=>t('Password confirm'),
+  );
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array(
+	'#type'=>'submit',
+	'#value'=>t('Submit'),	
+	
+  ); 
+
+  return $form ;
+}
+
+function block_register_form_validate($form, &$form_state){
+
+    $password = $form_state['values']['password'];
+    $pass_confirm = $form_state['values']['password_confirm'];
+    $firstname = $form_state['values']['firstname'];
+    $mail =  $form_state['values']['email'];
+     if($password!=$pass_confirm){
+      form_set_error('password_confirm', t('Passwords do not match.'));
+    }
+    if(strlen($password)<6){
+      form_set_error('password', t('Password length must not be less than 6 characters.'));
+    }
+    if($firstname=='') {
+      form_set_error('firstname', t('First name not is empty.'));
+    }
+    if(valid_email_address($mail) == 0) {
+      form_set_error('email', t('Not a valid email address.'));
+    }  
+}
+function block_register_form_submit($form, &$form_state){
+
+  $mail = $form_state['values']['email'];
+  $firstname = $form_state['values']['firstname'];
+  $pass = $form_state['values']['password_confirm'];
+  register_user_form_data($mail,$firstname,$pass,$form_state);
+
+}
+
+/**
+* Create a new user  
+*/
+function register_user_form_data($mail, $firstname,$pass,&$form_state){
+
+       $check_email = db_query('select count(*) from {users} where mail = :mail', array(
+            ':mail' => $mail
+        ))->fetchfield();
+       $check_name = db_query('select count(*) from {users} where name = :name', array(
+            ':name' => $firstname
+      ))->fetchfield();
+	if($check_email==0){
+		if($check_name==0){
+                $account = array(
+                    'name' => $firstname,
+                    'pass' => $pass,
+                    'mail' => $mail,
+                    'status' => 1,
+                    'init' => $mail,
+                    'roles' => array(
+                        '2' => true
+                    ),
+                );
+                user_save(null, $account);
+		 //drupal_set_message(t('Created a new user account for '.$firstname.'.'));   
+                 $form_state['redirect'] = 'register/'.$firstname.'/welcome';
+		}else{
+		$firstname = $firstname.'1';
+		register_user_form_data($mail, $firstname,$pass,$form_state);
+		}
+	}else{
+            drupal_set_message(t('The email '.$mail.' is already taken.'),'error');
+	}
+
+}
+
+function registration_welcome($content){
+    return theme('welcome',array('content'=>$content));
+}
+
+function ORLounge_theme(){
+    $item = array(
+     'welcome'=>array(  
+      'template' => 'welcome',
+      'variables' => array('content' => null),
+      'path' => drupal_get_path('module', 'ORLounge'),
+      ),
+    );
+return $item;
+}

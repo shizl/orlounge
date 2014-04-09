@@ -1,0 +1,20 @@
+
+name = orlounge2014
+description =  Custom theme.
+package = Core
+version = VERSION
+core = 7.x
+
+stylesheets[all][] = css/style.css
+scripts[] = js/home.js
+
+regions[header] = Header
+regions[home] =  Home Main content
+regions[content] = Content
+regions[footer] = Footer
+
+; Information added by Drupal.org packaging script on 2014-01-15
+version = "7.26"
+project = "drupal"
+datestamp = "1389815930"
+
