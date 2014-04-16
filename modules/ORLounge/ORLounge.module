@@ -6,6 +6,17 @@ function ORLounge_menu(){
      'access callback' =>true,
      'page arguments' => array(1),
   );
+  $items['add_new_comment'] = array(
+     'page callback' => 'add_new_comment',
+     'access callback' =>true,
+  );
+   $items['create_group'] = array(
+     'page callback' => 'drupal_get_form',
+     'page arguments'=>array('create_group'),
+     'access callback' =>true,
+     'file'=>'group.inc',
+  );
+
   return $items;
 }
 
@@ -186,6 +197,7 @@ function register_user_form_data($mail, $firstname,$pass,&$form_state){
                     ),
                 );
                 user_save(null, $account);
+
 		 //drupal_set_message(t('Created a new user account for '.$firstname.'.'));   
                  $form_state['redirect'] = 'register/'.$firstname.'/welcome';
 		}else{
@@ -212,3 +224,37 @@ function ORLounge_theme(){
     );
 return $item;
 }
+
+
+function add_new_comment(){ 
+ $nid = $_POST['nid'];
+ $uid = $_POST['uid'];
+ $comment_body = empty($_POST['comment'])?'':$_POST['comment'];
+ $user = user_load($uid);
+$comment = new stdClass();
+
+$comment->nid = $nid; // nid of a node you want to attach a comment to
+$comment->cid = 0; // leave it as is
+$comment->pid = 0; // parent comment id, 0 if none 
+$comment->uid = $uid; // user's id, who left the comment
+$comment->mail = $user->mail; // user's email
+$comment->name = $user->name; // If user is authenticated you can omit this field, it will be auto-populated, if the user is anonymous and you want to name him somehow, input his name here
+$comment->thread = '01/'; // OPTIONAL. If you need comments to be threaded you can fill this value. Otherwise omit it.
+$comment->hostname = '127.0.0.1' ;// OPTIONAL. You can log poster's ip here
+$comment->created = time(); // OPTIONAL. You can set any time you want here. Useful for backdated comments creation.
+$comment->is_anonymous = 0; // leave it as is
+$comment->homepage = ''; // you can add homepage URL here
+$comment->status = COMMENT_PUBLISHED; // We auto-publish this comment
+$comment->language = LANGUAGE_NONE; // The same as for a node
+$comment->subject = 'Comment subject'; 
+$comment->comment_body[$comment->language][0]['value'] = $comment_body; // Everything here is pretty much like with a node
+$comment->comment_body[$comment->language][0]['format'] = 'filtered_html'; 
+//$comment->field_custom_field_name[LANGUAGE_NONE][0]['value'] = 'Some value'; // OPTIONAL. If your comment has a custom field attached it can added as simple as this // preparing a comment for a save
+
+comment_submit($comment); // saving a comment
+comment_save($comment);
+ 
+ print '<div class="comment-row"><img src="/sites/default/files/pictures/picture-1-1397187278.jpg"><div class="comment-body"><span class="user-name">'.$user->name.'</span>'.$comment_body.'<div class="comment-date">'.format_interval((time() - $comment->created), 2) . t(' ago').'</div></div></div>';
+}
+
+

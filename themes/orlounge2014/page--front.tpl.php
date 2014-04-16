@@ -9,9 +9,20 @@
             </a>
          <?php endif; ?>
       </div>
+      <?php  global $user ;  ?>
+      <?php if($user->uid !=0): ?>
+	<div class="user_block">
+	 <?php 
+		$picture = db_query('SELECT filename FROM {file_managed} where fid='.$user->picture)->fetchfield();
+		echo '<img src="/sites/default/files/pictures/'.$picture.'" />';
+ 		echo '<div>'.$user->name.'</div>'; 
+ 		echo '<a href="/user/'.$user->uid.'/edit">Edit profile</a>'; 
+	?> 
+	</div>
+      <?php  endif; ?>
       <?php  if($page['header']): ?>
         <?php  print render($page['header']) ; ?>
-      <?php endif ?>
+      <?php endif; ?>
       </div>
     </div> <!-- header end -->
 <!--

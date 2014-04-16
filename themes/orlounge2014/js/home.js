@@ -40,4 +40,40 @@ jQuery(document).ready(function() {
        }
   });
 
+ jQuery('.add-comment-body').each(function(){
+      jQuery(this).blur(function(){
+      if(jQuery(this).val().length==0){
+   	jQuery(this).val('Write a comment...');
+       }
+      
+      });
+       jQuery(this).focus(function(){
+   
+      if(jQuery(this).val()=="Write a comment..."){
+   	jQuery(this).val('');
+       }
+      });
+  
+ }); 
+
+
 });
+
+
+function enterIn(evt,nid,uid){
+  var evt=evt?evt:(window.event?window.event:null);
+
+  if(evt.keyCode==13){
+  comment = jQuery('.comment-node-'+nid).val();
+         jQuery.post("/add_new_comment", {
+      nid : nid,
+      uid : uid,
+      comment:comment	
+    }, function(data){      
+       jQuery('#node-'+nid+' .post-comment .form-textarea-wrapper').before(data);
+      jQuery('.comment-node-'+nid).val('');
+    }, "text");
+  }
+
+}
+

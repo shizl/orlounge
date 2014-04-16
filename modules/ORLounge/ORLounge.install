@@ -1,0 +1,54 @@
+<?php
+
+function ORLounge_install(){
+
+}
+function ORLounge_schema(){
+
+  $schema['hospital'] = array(
+      'fields' => array(
+        'id' => array(
+          'type' => 'serial',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          ),
+
+        'name' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'default' => '',
+          ),
+        'country' => array(
+          'type' => 'varchar',
+          'length' => 16,
+          'not null' => TRUE,
+          'default' => '',
+          ),
+        'state' => array(
+          'type' => 'varchar',
+          'length' => 16,
+          'not null' => TRUE,
+          'default' => '',
+          ),
+        'type' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'default' => '',
+          ),
+        ),
+        'primary key' => array('id'),
+        'indexes' => array(
+          'id' => array('id'),
+        ),
+      );
+
+  	return $schema;
+}
+
+
+function ORLounge_uninstall(){
+
+}
+
