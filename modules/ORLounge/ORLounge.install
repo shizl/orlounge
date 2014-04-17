@@ -13,11 +13,11 @@ function ORLounge_schema(){
           'not null' => TRUE,
           ),
 
-        'name' => array(
-          'type' => 'varchar',
-          'length' => 255,
-          'not null' => TRUE,
-          'default' => '',
+        'nid' => array(
+         'type' => 'int',
+         'unsigned' => TRUE,
+         'not null' => TRUE,
+         'default' => 0
           ),
         'country' => array(
           'type' => 'varchar',

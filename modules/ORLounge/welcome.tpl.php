@@ -10,7 +10,7 @@
             can view and comment on the OR Chatting room. </p>
       </div>
       <div class="block">
-         <h4><a href="/create_group">Create an ORLounge</a></h4>
+         <h4><a href="/create/<?php print $content ;?>/group">Create an ORLounge</a></h4>
          <p></p>
          <p>Create an existing ORLounge Group, this applicable if you are the manager of 
             the Operating room of your hospital. In this case your request will need 

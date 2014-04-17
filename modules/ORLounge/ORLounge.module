@@ -1,25 +1,36 @@
 <?php 
 
 function ORLounge_menu(){
-  $items['register/%/welcome'] = array(
-     'page callback' => 'registration_welcome',
-     'access callback' =>true,
-     'page arguments' => array(1),
+  $items['join/%/group'] = array(
+     'page callback' => 'drupal_get_form',
+     'page arguments'=>array('join_group_form'),
+     'access callback' =>'access_login_user',
+     'file'=>'group.inc',
   );
   $items['add_new_comment'] = array(
      'page callback' => 'add_new_comment',
      'access callback' =>true,
   );
-   $items['create_group'] = array(
+   $items['create/%/group'] = array(
      'page callback' => 'drupal_get_form',
-     'page arguments'=>array('create_group'),
-     'access callback' =>true,
+     'page arguments'=>array('create_group_form'),
+     'access callback' =>'access_login_user',
      'file'=>'group.inc',
   );
 
   return $items;
 }
 
+function access_login_user(){
+  global $user;  
+   if($user->uid==0){
+     return false;
+   }else if($user->name != arg(1)){
+      return false;
+   }else{
+      return true;
+   }
+}
 function ORLounge_block_info() {
 
   $blocks['welcome'] = array(
@@ -69,22 +80,22 @@ function ORLounge_block_view($delta='') {
 }
 
 function block_welcome_content(){
-   $output = t('ORLOUNGE is a free community sites, where doctors, nurses, and administrators who work together in the operating room, come together to share their experiences in their own private lounges');
+   $output = t('ORLounge is a community site for operating rooms. Doctors and nurses working in an operating room can create their own private Lounge sites and share their professional activities.');
   
  return $output; 
 }
 function block_join_content(){
 
-   $output = '<div class="dt-sc-ico-content  type3"><div class="icon"> <span class="fa fa-hospital-o"> </span> </div><h5><a target="_blank" href="#"> Great Infrastructure </a></h5><p>Nunc at pretium est curabitur commodo leac est venenatis egestas sed aliquet auguevelit.</p></div>
-<div class="dt-sc-ico-content  type3"><div class="icon"> <span class="fa fa-ambulance"> </span> </div><h5><a target="_blank" href="#"> 24/7 Ambulance Services </a></h5><p>Nunc at pretium est curabitur commodo leac est venenatis egestas sed aliquet auguevelit.</p></div>
-<div class="dt-sc-ico-content  type3"><div class="icon"> <span class="fa fa-medkit"> </span> </div><h5><a target="_blank" href="#"> Cutting Edge Technology </a></h5><p>Nunc at pretium est curabitur commodo leac est venenatis egestas sed aliquet auguevelit.</p></div>';
+   $output = '<div class="dt-sc-ico-content  type3"><div class="icon"> <span class="fa fa-hospital-o"><img src="/sites/all/themes/orlounge2014/images/formula-people.png" /> </span> </div><h5><a target="_blank" href="#"> What you can do in your own operating room Lounge site </a></h5><p>Members can share experiences; post OR notices and documents, make announcements, create working documents, make friends, discuss, collaborate, learn, look for products and services and communicate in the OR in real time. </p></div>
+<div class="dt-sc-ico-content  type3"><div class="icon"> <span class="fa fa-ambulance"> <img src="/sites/all/themes/orlounge2014/images/formula-puzzle.png" /></span> </div><h5><a target="_blank" href="#"> How the site will benefit you and your OR </a></h5><p>You will improve your personal professional productivity, increase operating room efficiency and patient safety; upgrade your skills; make friends, enhance your personal and professional lives, and …much more.</p></div>
+<div class="dt-sc-ico-content  type3"><div class="icon"> <span class="fa fa-medkit"><img src="/sites/all/themes/orlounge2014/images/formula-speech.png" /> </span> </div><h5><a target="_blank" href="#"> Join people with same interest </a></h5><p>Registered members can further create Special Interest “Lounges” where they meet and collaborate with other members other operating rooms with the same specialty or interest. The Special Interest Lounges could be for Surgical specialties, OR administration, Residency, Teaching, Research, and …much more.</p></div>';
   
  return $output; 
 }
 function block_home_faq_content(){
 
    $output = '<div class="home_content">
-<div class="col"><div class="title">Professional of the operating room</div><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam laoreet in velit in mattis. Morbi vel solicitudin erat, non semper lacus</div><div class="link"><a href="#">Learn more</a></div></div><div class="col"><div class="title">Orlounge is free to use </div><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam laoreet in velit in mattis. Morbi vel solicitudin erat, non semper lacus</div><div class="link"><a href="#">Learn more</a></div></div><div class="col"><div class="title">Need Help ?</div><div class="desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam laoreet in velit in mattis. Morbi vel solicitudin erat, non semper lacus</div><div class="link"><a href="#">Learn more</a></div></div>
+<div class="col"><div class="title">Professional of the operating room</div><div class="desc">For the first time, people working in the OR can work as a group and align their interests. An Operating Room Lounge site is a management and productivity tool, and a real time messaging site. </div><div class="link"><a href="#">Learn more</a></div></div><div class="col"><div class="title">Orlounge is free to use </div><div class="desc">The sites are administered locally. Each Operating room is responsible for its security and privacy. </div><div class="link"><a href="#">Learn more</a></div></div><div class="col"><div class="title">Need Help ?</div><div class="desc">Surgical professionals with same interest can come together with online tools to work together.</div><div class="link"><a href="#">Learn more</a></div></div>
 </div>';
   
  return $output; 
@@ -95,13 +106,13 @@ function block_register_form($form, &$form_state){
   $form['department'] = array(
 	'#type'=>'select',
 	'#options'=>array(
-			'0'=>'Select Department',
-			'Gynacelogy'=>'Gynacelogy',
-			'Blood Bank'=>'Blood Bank',
-			'Ophthalmology'=>'Ophthalmology',
-			'Oncology'=>'Oncology'
+			'Physician'=>'Physician',
+			'Nurse'=>'Nurse',
+			'Resident/fellow'=>'Resident/fellow',
+			'Chief of Surgery'=>'Chief of Surgery',
+			'OR Manager'=>'OR Manager'
 			),
-	'#default_value'=>0,
+
    );
   $form['firstname'] = array(
 	'#type'=>'textfield',
@@ -186,20 +197,31 @@ function register_user_form_data($mail, $firstname,$pass,&$form_state){
       ))->fetchfield();
 	if($check_email==0){
 		if($check_name==0){
+
+                 if($form_state['values']['department']=='OR Manager'){
+                   $role = array('5'=>true);
+                 } else{
+                   $role = array('2'=>true);
+                 } 
                 $account = array(
                     'name' => $firstname,
                     'pass' => $pass,
                     'mail' => $mail,
                     'status' => 1,
                     'init' => $mail,
-                    'roles' => array(
-                        '2' => true
-                    ),
+                    'roles' => $role
                 );
                 user_save(null, $account);
+		$userRecord = user_authenticate($firstname, $pass);
+		$form_state['uid'] = $userRecord;
+		user_login_submit(array(), $form_state); 		
 
-		 //drupal_set_message(t('Created a new user account for '.$firstname.'.'));   
-                 $form_state['redirect'] = 'register/'.$firstname.'/welcome';
+		  if($form_state['values']['department']=='OR Manager'){
+
+                     $form_state['redirect'] = 'create/'.$firstname.'/group';  
+                  }else{
+                     $form_state['redirect'] = 'join/'.$firstname.'/group'; 
+                  }
 		}else{
 		$firstname = $firstname.'1';
 		register_user_form_data($mail, $firstname,$pass,$form_state);

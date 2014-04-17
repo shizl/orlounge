@@ -12,6 +12,51 @@ width:100%;
 h1 ,h2,h3,h4 ,h5{
 color:#2d2d29;
 }
+label{
+color:#2d2d29;
+}
+input.form-autocomplete, input.form-text, input.form-file, textarea.form-textarea, select.form-select {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: #999999 #CCCCCC #CCCCCC;
+    border-image: none;
+    border-right: 1px solid #CCCCCC;
+    border-style: solid;
+    border-width: 1px;
+    color: #333333;
+    padding: 2px;
+}
+
+input.form-submit, a.button {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: url("images/buttons.png") repeat-x scroll 0 0 rgba(0, 0, 0, 0);
+    background-color:#f3f4f5;
+    border-color: #E4E4E4 #D2D2D2 #B4B4B4;
+    border-image: none;
+    border-radius: 20px;
+    border-style: solid;
+    border-width: 1px;
+    color: #5A5A5A;
+    cursor: pointer;
+    font-family: "Lucida Grande",Verdana,sans-serif;
+    font-size: 1em;
+    font-weight: normal;
+    margin-bottom: 1em;
+    margin-right: 1em;
+    padding: 4px 17px;
+    text-align: center;
+}
+fieldset legend {
+color:#4BBCD7;
+font-weight:bold;
+}
+
 a{
 /*transition: all 300ms linear 0s;*/
 color:#4BBCD7;
@@ -233,24 +278,23 @@ color:#4BBCD7;
 -ms-transition: all 300ms linear;
 transition: all 300ms linear;
     width: 84px;
-background: none repeat scroll 0 0 #4BBCD7;
-border-color: #0390B2;
+
 }
+
+.dt-sc-ico-content.type3 .icon span img{
+
+width:84px;
+height:84px;
+}
+
 .dt-sc-ico-content.type3:hover .icon span {
 -moz-transform: scale(1) rotate(360deg) translate(0px); 
 -webkit-transform: scale(1) rotate(360deg) translate(0px); 
 -o-transform: scale(1) rotate(360deg) translate(0px); 
 transform: scale(1) rotate(360deg) translate(0px); 
 }
-.fa-hospital-o:before{
-    content: "\e600";
-}
-.fa-ambulance:before{
-    content: "\e601";
-}
-.fa-medkit:before{
-    content: "\e602";
-}
+
+
 #block-orlounge-welcome h2{
 font-weight:normal;
 font-size:24px;
@@ -294,6 +338,7 @@ overflow:hidden;
 #block-orlounge-home-register-form .content .form-actions input{
 background-color: #4BBCD7;
   border: medium none;
+border-radius: 0px;
     color: #FFFFFF;
     cursor: pointer;
     float: right;
