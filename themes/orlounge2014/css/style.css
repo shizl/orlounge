@@ -407,6 +407,12 @@ text-align:center;
 font-size:20px;
 font-weight:normal;
 }
+.region-three-25-50-25-top{
+ padding-top:20px;
+ padding-bottom:10px;
+border-bottom:2px solid #4BBCD7;
+
+}
 .region-three-25-50-25-first{
 width:23%;
 float:left;
@@ -421,6 +427,10 @@ padding:1%;
 width:23%;
 float:left;
 padding:1%;
+}
+
+.region-three-25-50-25-bottom{
+  padding-bottom:20px;
 }
 #quicktabs-commons_bw .item-list{
 display:none;
@@ -536,5 +546,54 @@ height:20px;
 padding:3px;
 color:#ccc;
 font-size:12px;
+}
+.region-three-25-50-25-first .panel-pane .pane-title,
+.region-three-25-50-25-top .panel-pane .pane-title,
+.pane-title{
+  background: none repeat scroll 0 0 #F3F4F5;
+    color: #000000;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 30px;
+    padding-left: 10px;
+}
+
+.region-three-25-50-25-first .panel-pane .pane-content .views-row a,
+.region-three-25-50-25-top .panel-pane .pane-content .views-row a{
+  border-top: 1px solid #EDEDED;
+    color: #5B514C;
+    display: block;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 1.1333em;
+    outline: medium none;
+    padding: 5px 15px;
+    text-decoration: none;
+}
+.region-three-25-50-25-first .panel-pane .pane-content .views-row-first a,
+.region-three-25-50-25-top .panel-pane .pane-content .views-row-first a{
+border-top:none;
+}
+.region-three-25-50-25-first .panel-pane .pane-content .views-row a:hover,
+.region-three-25-50-25-top .panel-pane .pane-content .views-row a:hover{
+background-color:#f3f4f5;
+}
+.pane-ads{
+float:left;
+width:23%;
+padding:1%;
+}
+.pane-group-information{
+ float:left;
+width:72%;
+bordeR:1px solid #ccc;
+padding:10px;
+}
+.pane-group-information h2{
+ display:none;
+}
+.view-commons-contributors-group img{
+width:50px;
+height:50px;
 }
 
