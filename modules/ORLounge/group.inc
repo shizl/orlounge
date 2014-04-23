@@ -1,61 +1,35 @@
 <?php
 
-function get_hospital_by_state($state="AK"){
+function get_hospital_by_state($state="AL",$vid=6){
   
    $hospitals = array();
-  switch($state){
-   case 'AK':
-    $hospitals  = array(
-		'ALASKA NATIVE MEDICAL CENTER'=>'ALASKA NATIVE MEDICAL CENTER',
-		'ALASKA REGIONAL HOSPITAL'=>'ALASKA REGIONAL HOSPITAL',
-		'BARTLETT REGIONAL HOSPITAL'=>'BARTLETT REGIONAL HOSPITAL',
-		'CENTRAL PENINSULA GENERAL HOSPITAL'=>'CENTRAL PENINSULA GENERAL HOSPITAL',
-		'FAIRBANKS MEMORIAL HOSPITAL'=>'FAIRBANKS MEMORIAL HOSPITAL',
-		'KETCHIKAN GENERAL HOSPITAL'=>'KETCHIKAN GENERAL HOSPITAL',
-		'MAT-SU REGIONAL MEDICAL CENTER'=>'MAT-SU REGIONAL MEDICAL CENTER',
-		'MT EDGECUMBE HOSPITAL'=>'MT EDGECUMBE HOSPITAL',
-		'PROVIDENCE ALASKA MEDICAL CENTER'=>'PROVIDENCE ALASKA MEDICAL CENTER',
-		'SITKA COMMUNITY HOSPITAL'=>'SITKA COMMUNITY HOSPITAL',
-		'SOUTH PENINSULA HOSPITAL'=>'SOUTH PENINSULA HOSPITAL',
-		'WRANGELL MEDICAL CENTER'=>'WRANGELL MEDICAL CENTER',
-		'YUKON KUSKOKWIM DELTA REG HOSPITAL'=>'YUKON KUSKOKWIM DELTA REG HOSPITAL',
-		);
-   break;
-   case 'AL':
-    $hospitals  = array(
-		'ANDALUSIA REGIONAL HOSPITAL'=>'ANDALUSIA REGIONAL HOSPITAL',
-		'ATHENS-LIMESTONE HOSPITAL'=>'ATHENS-LIMESTONE HOSPITAL',
-		'ATMORE COMMUNITY HOSPITAL'=>'ATMORE COMMUNITY HOSPITAL',
-		'BAPTIST MEDICAL CENTER EAST'=>'BAPTIST MEDICAL CENTER EAST',
-		'BAPTIST MEDICAL CENTER SOUTH'=>'BAPTIST MEDICAL CENTER SOUTH',
-		'BIBB MEDICAL CENTER'=>'BIBB MEDICAL CENTER',
-		'BROOKWOOD MEDICAL CENTER'=>'BROOKWOOD MEDICAL CENTER',
-		'BRYAN W WHITFIELD MEM HOSP INC'=>'BRYAN W WHITFIELD MEM HOSP INC',
-		'BULLOCK COUNTY HOSPITAL'=>'BULLOCK COUNTY HOSPITAL',
-		'CALLAHAN EYE FOUNDATION HOSPITAL'=>'CALLAHAN EYE FOUNDATION HOSPITAL',
-		'CHEROKEE MEDICAL CENTER'=>'CHEROKEE MEDICAL CENTER',
-		'CHILTON MEDICAL CENTER'=>'CHILTON MEDICAL CENTER',
-		'CITIZENS BAPTIST MEDICAL CENTER'=>'CITIZENS BAPTIST MEDICAL CENTER',
-		'CLAY COUNTY HOSPITAL'=>'CLAY COUNTY HOSPITAL',
-		'COMMUNITY HOSPITAL INC'=>'COMMUNITY HOSPITAL INC',
-		'COOPER GREEN HOSPITAL'=>'COOPER GREEN HOSPITAL',
-		'COOSA VALLEY MEDICAL CENTER'=>'COOSA VALLEY MEDICAL CENTER',
-		'CRENSHAW COMMUNITY HOSPITAL'=>'CRENSHAW COMMUNITY HOSPITAL',
-		'CRESTWOOD MEDICAL CENTER'=>'CRESTWOOD MEDICAL CENTER',
-		'CULLMAN REGIONAL MEDICAL CENTER'=>'CULLMAN REGIONAL MEDICAL CENTER',
-		'D C H REGIONAL MEDICAL CENTER'=>'D C H REGIONAL MEDICAL CENTER',
-		'D W MCMILLAN MEMORIAL HOSPITAL'=>'D W MCMILLAN MEMORIAL HOSPITAL',
-		'DALE MEDICAL CENTER'=>'DALE MEDICAL CENTER',
-		'DECATUR GENERAL HOSPITAL'=>'DECATUR GENERAL HOSPITAL',
-		'EAST ALABAMA MEDICAL CENTER AND SNF'=>'EAST ALABAMA MEDICAL CENTER AND SNF',
-		'ELBA GENERAL HOSPITAL'=>'ELBA GENERAL HOSPITAL',
-		'ELIZA COFFEE MEMORIAL HOSPITAL'=>'ELIZA COFFEE MEMORIAL HOSPITAL',
-		);
-   break;
-   } 
+   $state_id = db_query('select tid from {taxonomy_term_data} where name =:name and vid =:vid',array(':name'=>$state,':vid'=>$vid))->fetchfield();  
+   $hot_name_array = db_query('select tid, name from {taxonomy_term_data} where tid in (select tid from {taxonomy_term_hierarchy} where parent =:parent)',array(':parent'=>$state_id));      
 
+    foreach($hot_name_array as $hot){
+       $hospitals[$hot->tid] = $hot->name;
+    }
+
+  $exist_hot_arr = db_query("select title from {node} where type='group'");
+  
+   foreach($exist_hot_arr as $exist_hot){
+       $hot_id = db_query('select tid from {taxonomy_term_data} where name =:name',array(':name'=>$exist_hot->title))->fetchfield();  
+      unset($hospitals[$hot_id]);
+   }
  return $hospitals;
 }
+
+function get_join_group($state="AL",$vid=6){
+ 
+  $hospitals = array();
+      $hospitals_arr = db_query('select nid , type from {hospital} where state = :state',array(':state'=>$state));
+        
+      foreach($hospitals_arr as $value){
+        $hot_name = db_query(' select name from {taxonomy_term_data} where tid=:tid and vid=:vid',array(':tid'=>$value->type,':vid'=>$vid))->fetchfield();
+        $hospitals[$value->nid] = $hot_name;
+      } 
+   return $hospitals;
+}  
 
 function create_group_form($form,&$form_state){
 
@@ -86,6 +60,11 @@ function create_group_form($form,&$form_state){
     '#type'=>'select',
     '#options'=> array('US'=>'United States'),
   );
+  $form['hospital_location']['type'] = array(
+    '#title'=>t('Type'),
+    '#type'=>'select',
+    '#options'=>array('6'=>'Hospital','7'=>'Ambulatory Surgery Center'),
+  );
   $form['hospital_location']['state'] = array(
     '#title'=>t('State'),
     '#type'=>'select',
@@ -97,11 +76,12 @@ function create_group_form($form,&$form_state){
       'effect' => 'fade',
     ),
   );
+
   $default_hot = get_hospital_by_state();
   $form['hospital_location']['hospital'] = array(
     '#title'=>t('Hospital'),
     '#type'=>'select',
-    '#options' =>empty($form_state['values']['state'])?$default_hot:get_hospital_by_state($form_state['values']['state']),
+    '#options' =>empty($form_state['values']['state'])?$default_hot:get_hospital_by_state($form_state['values']['state'],$form_state['values']['type']),
     '#prefix' => '<div id="hospital_wrapper">',
     '#suffix' => '</div>', 
 
@@ -141,10 +121,11 @@ function create_group_form_submit($form,&$form_state){
     }  
 
   if($form_state['values']['hospital']!=null){
+   $hot_name = db_query(' select name from {taxonomy_term_data} where tid=:tid',array(':tid'=>$form_state['values']['hospital']))->fetchfield();
    $newNode = (object) NULL; 
    $newNode->type = 'group'; 
    $newNode->uid = $user->uid; 
-   $newNode->title = $form_state['values']['hospital'];
+   $newNode->title = $hot_name;
    $newNode->created = strtotime("now");
    $newNode->changed = strtotime("now");
    $newNode->status = 0; 
@@ -161,7 +142,7 @@ function create_group_form_submit($form,&$form_state){
    }
    $newNode->body[$newNode->language][0]['summary'] = '';
    $newNode->body[$newNode->language][0]['format'] = 'filtered_html'; 
-
+   $newNode->field_og_subscribe_settings[$newNode->language][0]['value']='approval';
   node_object_prepare($newNode);
   // Save the node.  // The node will also get published, if $newNode->status was set to 1. 
    $node = node_submit($newNode);
@@ -205,6 +186,11 @@ function join_group_form($form,&$form_state){
     '#type'=>'select',
     '#options'=> array('US'=>'United States'),
   );
+  $form['Join_Form']['type'] = array(
+    '#title'=>t('Type'),
+    '#type'=>'select',
+    '#options'=>array('6'=>'Hospital','7'=>'Ambulatory Surgery Center'),
+  );
   $form['Join_Form']['state'] = array(
     '#title'=>t('State'),
     '#type'=>'select',
@@ -216,11 +202,12 @@ function join_group_form($form,&$form_state){
       'effect' => 'fade',
     ),
   );
-  $default_hot = get_hospital_by_state();
+
+  $default_hot = get_join_group();
   $form['Join_Form']['hospital'] = array(
     '#title'=>t('Hospital'),
     '#type'=>'select',
-    '#options' =>empty($form_state['values']['state'])?$default_hot:get_hospital_by_state($form_state['values']['state']),
+    '#options' => empty($form_state['values']['state'])?$default_hot:get_join_group($form_state['values']['state'],$form_state['values']['type']),
     '#prefix' => '<div id="join_form_hospital_wrapper">',
     '#suffix' => '</div>', 
 
@@ -239,9 +226,15 @@ function join_form_state_choice($form,&$form_state){
  return $form['Join_Form']['hospital'];
 }
 
-
 function join_group_form_submit($form,&$form_state){
- 
+  
+  $status = db_query("select status from {node} where type='group' and nid =".$form_state['values']['hospital'])->fetchfield();
+  if($status){
+  drupal_set_message('Thank you!');
+  $form_state['redirect'] = 'node/'.$form_state['values']['hospital'];
+  }else{
+     drupal_set_message('This Group is not published.','warning');
+  } 
 }
 
 
