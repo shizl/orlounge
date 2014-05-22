@@ -16,9 +16,15 @@ $comment_body = db_query('select comment_body_value,entity_id from {field_data_c
     $arr = db_query('select uid,created from {comment} where cid = :cid ', array(':cid'=>$value->entity_id))->fetchAssoc();
 
       $user = user_load($arr['uid']);
-      $picture =  $user->picture->filename;
+ 
+      if($user->picture==null){
+        $path = '/sites/default/files/styles/50x50/public/pictures/picture-default.jpg';
+      }else{
+        $picture =  $user->picture->filename;
+        $path = '/sites/default/files/pictures/'.$picture; 
+      }
       print '<div class="comment-row">';
-      print '<img src="/sites/default/files/pictures/'.$picture.'" />';
+      print '<img src="'.$path.'" />';
       print '<div class="comment-body"><span class="user-name">'.$user->name.'</span>'.$value->comment_body_value.'<div class="comment-date">'.format_interval((time() - $arr['created']) , 2) . t(' ago') .'</div></div>';
       print '</div>';
     } 

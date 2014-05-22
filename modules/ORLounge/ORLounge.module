@@ -17,6 +17,12 @@ function ORLounge_menu(){
      'access callback' =>'access_login_user',
      'file'=>'group.inc',
   );
+  
+   $items['welcome'] = array(
+     'page callback'=>'registration_welcome',
+     'access arguments' => array('access content'),	
+    );
+
 
   return $items;
 }
@@ -53,6 +59,13 @@ function ORLounge_block_info() {
     'region' => -1,
     'status' => TRUE,
   );
+
+  $blocks['group_list'] = array(
+    'info' => t('Group List'),
+    'region' => -1,
+    'status' => TRUE,
+  );
+
   return $blocks;
 
 }
@@ -74,6 +87,10 @@ function ORLounge_block_view($delta='') {
     case 'home_register_form':
       $block['subject'] = 'Join for free';
       $block['content'] = drupal_get_form('block_register_form');
+      break;
+    case 'group_list':
+      $block['subject'] = 'Group List';
+      $block['content'] =  group_list_form();
       break;
    }
    return $block;
@@ -114,6 +131,27 @@ function block_register_form($form, &$form_state){
 			),
 
    );
+  $form['speciality'] = array(
+	'#type'=>'select',
+	'#options'=>array(
+			   'default'=>'Please Select Speciality',
+			   'General Surgery'=>'General Surgery',
+			   'Plastic Surgery'=>'Plastic Surgery',
+			   'Urology'=>'Urology',
+			   'Neurosurgery'=>'Neurosurgery',
+			   'Otolarygology'=>'Otolarygology',
+			   'Ophthamology'=>'Ophthamology',
+			   'Orthopaedic Surgery'=>'Orthopaedic Surgery',
+			   'Thoracic Surgery'=>'Thoracic Surgery',
+			   'Cardiovascular Surgery'=>'Cardiovascular Surgery',
+			   'Paediatric Surgery'=>'Paediatric Surgery',
+			   'Obstetrics'=>'Obstetrics',
+			   'Gynaecology'=>'Gynaecology',
+			   'Craniomaxillaryfacial Surgery'=>'Craniomaxillaryfacial Surgery'				
+			 ),
+ 	'#default_value'=>'default',
+  );
+
   $form['firstname'] = array(
 	'#type'=>'textfield',
 	'#maxlength'=>30,
@@ -149,7 +187,7 @@ function block_register_form($form, &$form_state){
   $form['actions'] = array('#type' => 'actions');
   $form['actions']['submit'] = array(
 	'#type'=>'submit',
-	'#value'=>t('Submit'),	
+	'#value'=>t('Next'),	
 	
   ); 
 
@@ -232,7 +270,8 @@ function register_user_form_data($mail, $firstname,$pass,&$form_state){
 
 }
 
-function registration_welcome($content){
+function registration_welcome(){
+    $content = '';
     return theme('welcome',array('content'=>$content));
 }
 
@@ -268,7 +307,7 @@ $comment->is_anonymous = 0; // leave it as is
 $comment->homepage = ''; // you can add homepage URL here
 $comment->status = COMMENT_PUBLISHED; // We auto-publish this comment
 $comment->language = LANGUAGE_NONE; // The same as for a node
-$comment->subject = 'Comment subject'; 
+$comment->subject = 'Post comment'; 
 $comment->comment_body[$comment->language][0]['value'] = $comment_body; // Everything here is pretty much like with a node
 $comment->comment_body[$comment->language][0]['format'] = 'filtered_html'; 
 //$comment->field_custom_field_name[LANGUAGE_NONE][0]['value'] = 'Some value'; // OPTIONAL. If your comment has a custom field attached it can added as simple as this // preparing a comment for a save
@@ -276,7 +315,329 @@ $comment->comment_body[$comment->language][0]['format'] = 'filtered_html';
 comment_submit($comment); // saving a comment
 comment_save($comment);
  
- print '<div class="comment-row"><img src="/sites/default/files/pictures/picture-1-1397187278.jpg"><div class="comment-body"><span class="user-name">'.$user->name.'</span>'.$comment_body.'<div class="comment-date">'.format_interval((time() - $comment->created), 2) . t(' ago').'</div></div></div>';
+
+      if($user->picture == null){
+       $user_picture_path = '/sites/default/files/styles/50x50/public/pictures/picture-default.jpg';
+      }elseif($user->picture==0){
+       $user_picture_path = '/sites/default/files/styles/50x50/public/pictures/picture-default.jpg';
+      }else{
+            $filename = db_query('SELECT filename FROM {file_managed} where fid='.$user->picture)->fetchfield();
+       $user_picture_path = '/sites/default/files/pictures/'.$filename;
+      }
+
+ print '<div class="comment-row"><img src="'.$user_picture_path.'"><div class="comment-body"><span class="user-name">'.$user->name.'</span>'.$comment_body.'<div class="comment-date">'.format_interval((time() - $comment->created), 2) . t(' ago').'</div></div></div>';
+}
+/**
+ * Implements hook_init().
+ */
+function ORLounge_init() {
+
+  if (drupal_is_cli() || drupal_installation_attempted()) {
+    return;
+  }
+  // Don't run when site is in maintenance mode
+  if (variable_get('maintenance_mode', 0)) {
+    return;
+  }
+  // Ignore non index.php requests (like cron)
+  if (!empty($_SERVER['SCRIPT_FILENAME']) && realpath(DRUPAL_ROOT . '/index.php') != realpath($_SERVER['SCRIPT_FILENAME'])) {
+    return;
+  }
+
+  global $user;
+
+  // let administrator know that there is a config error.
+  if (variable_get('site_frontpage', '') == 'front_page' && user_access('administer menu')) {
+    drupal_set_message(t('There is a configuration error. The home page should not be set to the path "front_page". Please change this !link', array('!link' => l(t('here'), 'admin/config/system/site-information'))), 'error');
+  }
+
+    $join = db_query("select count(*) from {og_membership} where entity_type = 'user' and group_type ='node' and state = 1 and etid =".$user->uid)->fetchfield();
+
+        $arr = array(); 
+	$roles = db_query('select rid from {users_roles} where uid = '.$user->uid);
+		foreach($roles as $role){
+		  $arr[] = $role->rid;		
+		}
+
+  if (drupal_is_front_page()){
+	if($user->uid==0){
+           return ;
+        }else if(in_array(4,$arr)){
+           return;
+        }else if($join==1){
+ $gid = db_query("select gid from {og_membership} where entity_type = 'user' and group_type ='node' and state = 1 and etid =".$user->uid)->fetchfield();
+        drupal_goto('node/'.$gid);
+        }else if($join>1){
+          drupal_goto('group-list');
+        }else{
+          drupal_goto('welcome');
+        }	   
+  }
 }
 
+
+function group_list_form(){
+
+     global $user;
+
+    $output  = '';
+        $arr = array(); 
+	$roles = db_query('select rid from {users_roles} where uid = '.$user->uid);
+		foreach($roles as $role){
+		  $arr[] = $role->rid;		
+		}
+    if(in_array(4,$arr)){
+     $group_arr = db_query("select nid from {node} where type ='group' and  status = 1");
+	foreach($group_arr as $group){
+              $node = node_load($group->nid);
+              if(!empty($node->field_group_logo['und'][0]['filename'])){
+                $images = '<div class="field-image"><img src="/sites/default/files/'.$node->field_group_logo['und'][0]['filename'].' "/></div>';
+              }else{
+                $images = '';
+              }
+
+       $query = db_query("select etid from {og_membership} where entity_type ='node' and group_type ='node' and state = 1  and gid =".$group->nid." order by id desc LIMIT 0 , 1")->fetchAssoc();
+       if($query!=null){    
+           $post = node_load($query['etid']);
+            if($post->picture == 0){
+              $picture  = '<img width="50" height="50" src="sites/default/files/styles/50x50/public/pictures/picture-default.jpg" />';
+            }else{
+              $img = db_query('SELECT filename FROM {file_managed} where fid='.$post->picture)->fetchfield();
+              $picture = '<img width="50" height="50"  src="/sites/default/files/pictures/'.$img.'">';
+            }
+           $num = db_query('select count (distinct nid) from {comment} where nid =:nid',array(':nid'=>$post->nid))->fetchfield();
+
+ $comment_body = db_query('select comment_body_value,entity_id from {field_data_comment_body} where entity_id in (select cid from {comment} where nid = :nid)',array(':nid'=>$post->nid));
+ $c_output = '';
+
+    foreach($comment_body as $value){
+    
+    $comments = db_query('select uid,created from {comment} where cid = :cid ', array(':cid'=>$value->entity_id))->fetchAssoc();
+
+      $account = user_load($comments['uid']);
+     
+      
+      if($account->picture == null){
+       $user_picture_path = '/sites/default/files/styles/50x50/public/pictures/picture-default.jpg';
+      }elseif($account->picture->fid ==0){
+       $user_picture_path = '/sites/default/files/styles/50x50/public/pictures/picture-default.jpg';
+      }else{
+            $filename = db_query('SELECT filename FROM {file_managed} where fid='.$account->picture->fid)->fetchfield();
+       $user_picture_path = '/sites/default/files/pictures/'.$filename;
+      }
+      $c_output .= '<div class="comment-row"><img src="'.$user_picture_path.'" /><div class="comment-body"><span class="user-name">'.$account->name.'</span>'.$value->comment_body_value.'<div class="comment-date">'.format_interval((time() - $comments['created']) , 2) . t(' ago') .'</div></div></div>';
+    } 
+
+       if($user->picture ==0){
+      $default_picture_path = '/sites/default/files/styles/50x50/public/pictures/picture-default.jpg';
+       }else{
+            $filename = db_query('SELECT filename FROM {file_managed} where fid='.$user->picture)->fetchfield();
+            $default_picture_path = '/sites/default/files/pictures/'.$filename;
+       }
+
+           $p_output = '<div id="node-'.$post->nid.'" class="post-content">
+  <div class="content">
+    <div class="user-picture"><a class="user-picture"  href="/users/shi-zl">'.$picture.'</a></div>
+    <div class="user-name">'.$post->name.'</div>
+    <div class="post-body">'.$post->body['und'][0]['value'].'</div>
+    <div class="post-created">'.format_interval((time() - $post->created) , 2) . t(' ago').'<span class="count_comment"> 
+    '.$num.' people comment on this post </span></div>
+  </div>
+  <div class="post-comment">
+               '.$c_output.'
+            <div class="form-textarea-wrapper">
+	 <img src="'.$default_picture_path.'">   <input type="textarea" onkeydown="enterIn(event,'.$post->nid.','.$user->uid.');" value="Write a comment..." class="add-comment-body comment-node-'.$post->nid.'" cols="60" row="3">
+   </div>
+       </div>
+
+</div>';
+       }else{
+        $p_output = '';
+
+       }
+	      $output .=  '<div class="custom-view-rows"><div class="field-title">'.$node->title.'</div>'.$images.'<div class="field-body">'.$node->body['und'][0]['value'].'</div>'.$p_output.'</div>'; 	
+	} 
+     }else{
+    $group_arr = db_query("select gid from {og_membership} where entity_type = 'user' and group_type ='node' and state = 1 and etid =".$user->uid);
+          foreach($group_arr as $group){
+               $node= node_load($group->gid);
+
+ if(!empty($node->field_group_logo['und'][0]['filename'])){
+                $images = '<div class="field-image"><img src="/sites/default/files/'.$node->field_group_logo['und'][0]['filename'].' "/></div>';
+              }else{
+                $images = '';
+              }
+
+       $query = db_query("select etid from {og_membership} where entity_type ='node' and group_type ='node' and state = 1  and gid =".$group->gid." order by id desc LIMIT 0 , 1")->fetchAssoc();
+       if($query!=null){    
+           $post = node_load($query['etid']);
+            if($post->picture == 0){
+              $picture  = '<img width="50" height="50" src="sites/default/files/styles/50x50/public/pictures/picture-default.jpg" />';
+            }else{
+              $img = db_query('SELECT filename FROM {file_managed} where fid='.$post->picture)->fetchfield();
+              $picture = '<img width="50" height="50"  src="/sites/default/files/pictures/'.$img.'">';
+            }
+           $num = db_query('select count (distinct nid) from {comment} where nid =:nid',array(':nid'=>$post->nid))->fetchfield();
+
+ $comment_body = db_query('select comment_body_value,entity_id from {field_data_comment_body} where entity_id in (select cid from {comment} where nid = :nid)',array(':nid'=>$post->nid));
+ $c_output = '';
+
+  foreach($comment_body as $value){
+    
+    $comments = db_query('select uid,created from {comment} where cid = :cid ', array(':cid'=>$value->entity_id))->fetchAssoc();
+
+      $account = user_load($comments['uid']);
+      if($account->picture == null){
+       $user_picture_path = '/sites/default/files/styles/50x50/public/pictures/picture-default.jpg';
+      }elseif($account->picture->fid ==0){
+       $user_picture_path = '/sites/default/files/styles/50x50/public/pictures/picture-default.jpg';
+      }else{
+            $filename = db_query('SELECT filename FROM {file_managed} where fid='.$account->picture->fid)->fetchfield();
+       $user_picture_path = '/sites/default/files/pictures/'.$filename;
+      }
+      
+      $c_output .= '<div class="comment-row"><img src="'.$user_picture_path.'" /><div class="comment-body"><span class="user-name">'.$account->name.'</span>'.$value->comment_body_value.'<div class="comment-date">'.format_interval((time() - $comments['created']) , 2) . t(' ago') .'</div></div></div>';
+  } 
+  if($user->picture ==0){
+      $default_picture_path = '/sites/default/files/styles/50x50/public/pictures/picture-default.jpg';
+  }else{
+            $filename = db_query('SELECT filename FROM {file_managed} where fid='.$user->picture)->fetchfield();
+            $default_picture_path = '/sites/default/files/pictures/'.$filename;
+  }
+
+          $p_output = '<div id="node-'.$post->nid.'" class="post-content">
+  <div class="content">
+    <div class="user-picture"><a class="user-picture"  href="/users/shi-zl">'.$picture.'</a></div>
+    <div class="user-name">'.$post->name.'</div>
+    <div class="post-body">'.$post->body['und'][0]['value'].'</div>
+    <div class="post-created">'.format_interval((time() - $post->created) , 2) . t(' ago').'<span class="count_comment"> 
+    '.$num.' people comment on this post </span></div>
+  </div>
+  <div class="post-comment">
+               '.$c_output.'
+            <div class="form-textarea-wrapper">
+	 <img src="'.$default_picture_path.'">   <input type="textarea" onkeydown="enterIn(event,'.$post->nid.','.$user->uid.');" value="Write a comment..." class="add-comment-body comment-node-'.$post->nid.'" cols="60" row="3">
+   </div>
+       </div>
+
+</div>';
+       }else{
+        $p_output = '';
+
+       }
+	       $output .=  '<div class="custom-view-rows"><div class="field-title">'.$node->title.'</div>'.$images.'<div class="field-body">'.$node->body['und'][0]['value'].'</div>'.$p_output.'</div>'; 
+          }
+     } 
+  $build['header'] = array(
+    '#prefix' => '<div class="view-header">',
+    '#suffix' => '</div>', 
+  );
+  $build['header']['view-header'] = drupal_get_form('override_commons_post_node_form');
+  $build['view-content'] = array(
+    '#markup' => '<div class="view-content">'.$output.'</div>',
+  );
+
+ return $build;
+}
+
+
+
+function override_commons_post_node_form($form,&$form_state){
+ 
+   global $user;
+    $options = array();
+ 
+        $arr = array(); 
+	$roles = db_query('select rid from {users_roles} where uid = '.$user->uid);
+		foreach($roles as $role){
+		  $arr[] = $role->rid;		
+		}
+    if(in_array(4,$arr)){
+     $group_arr = db_query("select nid ,title from {node} where type ='group' and  status = 1");
+	foreach($group_arr as $group){
+	   $options[$group->nid] = $group->title; 	
+	} 
+     }else{
+    $group_arr = db_query("select gid from {og_membership} where entity_type = 'user' and group_type ='node' and state = 1 and etid =".$user->uid);
+          foreach($group_arr as $group){
+		 $group_title = db_query("select title from {node} where type ='group' and nid =".$group->gid)->fetchfield();
+		$options[$group->gid] = $group_title;
+          }
+     } 
+
+   $form['body'] = array(
+     '#type'=>'textarea',
+     '#default_value'=>t("What's on your mind?"),
+    ); 
+   $form['og_group_ref']=array(
+     '#type' => 'select',
+     '#options' => $options,
+    );
+   $form['actions'] = array('#type'=>'actions');
+   $form['actions']['submit'] = array(
+      '#type'=>'submit',
+      '#value'=>t('post'),
+    );  
+  
+   return $form;
+}
+
+
+function override_commons_post_node_form_validate(&$form,&$form_state){
+ 
+ if($form_state['values']['body']==null || $form_state['values']['body']=="What's on your mind?"){
+    form_set_error('body','body is required.');
+ }
+
+}
+function override_commons_post_node_form_submit(&$form,&$form_state){
+
+  if(strlen($form_state['values']['body'])>20){
+    $title = substr($form_state['values']['body'],0,20);
+  }else{
+    $title = $form_state['values']['body'];
+  } 
+ global  $user;
+$newNode = (object) NULL; 
+   $newNode->type = 'post'; 
+   $newNode->uid = $user->uid; 
+   $newNode->title = $title;
+   $newNode->created = strtotime("now");
+   $newNode->changed = strtotime("now");
+   $newNode->status = 1; 
+   $newNode->comment = 0; 
+   $newNode->promote = 0; 
+   $newNode->sticky = 0; 
+   $newNode->tnid = 0; 
+   $newNode->language = 'und';
+   if($form_state['values']['body']!=null){
+      $newNode->body[$newNode->language][0]['value'] = $form_state['values']['body'];
+   }else{
+   $newNode->body[$newNode->language][0]['value'] ='';
+   }
+   $newNode->body[$newNode->language][0]['summary'] = '';
+   $newNode->body[$newNode->language][0]['format'] = 'filtered_html'; 
+
+
+  node_object_prepare($newNode);
+  // Save the node.  // The node will also get published, if $newNode->status was set to 1. 
+   $node = node_submit($newNode);
+   node_save($node);   
+   $nid = db_query("select nid from {node} where type = 'post' order by nid desc LIMIT 0 , 1")->fetchfield();
+   db_insert('og_membership') // Table name no longer needs {}
+     ->fields(array(
+    'type' => 'og_membership_type_default',
+    'etid' => $nid,
+    'entity_type' => 'node',
+    'gid' =>$form_state['values']['og_group_ref'],
+    'group_type'=>'node',
+    'state'=> 2,
+    'created'=>strtotime("now"),
+    'field_name'=>'og_group_ref',
+    'language'=>'en',  
+  ))
+  ->execute();
+drupal_set_message(t('Post '.$title.' has been created.'));
+
+}
 

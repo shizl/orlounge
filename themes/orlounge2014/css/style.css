@@ -15,6 +15,9 @@ color:#2d2d29;
 label{
 color:#2d2d29;
 }
+input ,select{
+outline:none;
+}
 input.form-autocomplete, input.form-text, input.form-file, textarea.form-textarea, select.form-select {
     -moz-border-bottom-colors: none;
     -moz-border-left-colors: none;
@@ -98,6 +101,7 @@ text-decoration:none;
     margin: 0;
     padding: 0 10px 3px;
     text-shadow: 0 1px 0 #FFFFFF;
+    color:#2d2d29;
 }
 .tabs ul.primary li.active a {
     background-color: #FFFFFF;
@@ -301,7 +305,7 @@ float:left;
 }
 
 .dt-sc-ico-content.type3 {
-    padding: 0 0 30px 110px;
+    padding: 0px 0px 0px 110px;
     position: relative;
     width: auto;
 }
@@ -351,10 +355,12 @@ height:84px;
 }
 
 .dt-sc-ico-content.type3:hover .icon span {
+/*
 -moz-transform: scale(1) rotate(360deg) translate(0px); 
 -webkit-transform: scale(1) rotate(360deg) translate(0px); 
 -o-transform: scale(1) rotate(360deg) translate(0px); 
 transform: scale(1) rotate(360deg) translate(0px); 
+*/
 }
 
 
@@ -509,7 +515,9 @@ display:none;
 #commons-bw-partial-node-form-post textarea{
 border:1px solid #ccc;
 }
-#commons-bw-partial-node-form-post .form-actions{
+#commons-bw-partial-node-form-post .form-actions,
+#override-commons-post-node-form .form-actions
+{
 margin:0px;
 background:#f3f4f5;
 padding:3px;
@@ -517,7 +525,8 @@ text-align:right;
 border:1px solid #ccc;
 border-top:none;
 }
-#commons-bw-partial-node-form-post .form-actions .form-submit{
+#commons-bw-partial-node-form-post .form-actions .form-submit,
+#override-commons-post-node-form .form-actions .form-submit{
 font-weight:bold;
     padding:2px 5px;
     text-align: center;
@@ -629,7 +638,8 @@ font-size:12px;
 margin-top:0px;
 }
 
-.region-three-25-50-25-second .panel-pane .pane-title{
+.region-three-25-50-25-second .panel-pane .pane-title
+{
  font-size:14px;
 }
 
@@ -750,5 +760,47 @@ border-bottom:none;
  width:100px;
  height:100px;
 }
+#commons-bw-partial-node-form-post .form-item-og-group-ref{
+position: absolute;
+background: #f3f4f5;
+margin-left: 10px;
+margin-top: 3px;
+}
+#commons-bw-partial-node-form-post .form-item-og-group-ref select{
+border: none;
+outline: none;
+background:none;
+}
 
-
+.custom-view-rows{
+overflow:hidden;
+}
+.custom-view-rows .post-content{
+clear:both;
+}
+.field-title{
+font-size:14px;
+font-weight:bold;
+color:#2D2D29;
+margin:1em 0 1em 0 ;
+}
+.field-image{
+float: left;
+height: 120px;
+width: 120px;
+}
+.field-image img{
+width:100px;
+height:100px;
+}
+#override-commons-post-node-form .form-item{
+margin:0px;
+}
+#override-commons-post-node-form .form-item-og-group-ref{
+position: absolute;
+padding-top:5px;
+}
+#override-commons-post-node-form .form-item-og-group-ref .form-select{
+border:none;
+background:none;
+}
