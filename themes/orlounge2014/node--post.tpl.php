@@ -32,8 +32,14 @@ $comment_body = db_query('select comment_body_value,entity_id from {field_data_c
          <?php  global $user; ?> 
          <?php if ($user->uid !=0): ?>
    <div class="form-textarea-wrapper">
-	 <?php $picture = db_query('SELECT filename FROM {file_managed} where fid='.$user->picture)->fetchfield();
-	 	print '<img src="/sites/default/files/pictures/'.$picture.'" />'; ?>
+	 <?php 
+                 if($user->picture==0){
+                    $default_path = '/sites/default/files/styles/50x50/public/pictures/picture-default.jpg';
+                 }else{
+                    $picture = db_query('SELECT filename FROM {file_managed} where fid='.$user->picture)->fetchfield();
+                      $default_path = '/sites/default/files/pictures/'.$picture;
+                 }
+	 	print '<img src="'.$default_path.'" />'; ?>
    <input type="textarea" row="3" cols="60" class="add-comment-body comment-node-<?php print $node->nid ?>" value="Write a comment..." onkeydown="enterIn(event,<?php print $node->nid ?>,<?php  print $user->uid ?>);" />
    </div>
      <?php endif; ?>

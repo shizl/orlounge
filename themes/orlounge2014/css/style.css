@@ -401,6 +401,14 @@ padding:10px;
 color:#ccc;
 background:#fafafa;
 }
+#block-orlounge-home-register-form .form-item-captcha-response{
+margin:0px;
+}
+#block-orlounge-home-register-form .form-item #edit-captcha-response{
+width:50px;
+display:inline;
+}
+
 #block-orlounge-home-register-form .content .form-actions{
 overflow:hidden;
 }

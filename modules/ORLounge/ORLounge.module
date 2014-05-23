@@ -184,6 +184,11 @@ function block_register_form($form, &$form_state){
 
 	'#description'=>t('Password confirm'),
   );
+$form['my_captcha_element'] = array(
+  '#type' => 'captcha',
+  '#captcha_type' => 'captcha/Math',
+);
+
   $form['actions'] = array('#type' => 'actions');
   $form['actions']['submit'] = array(
 	'#type'=>'submit',
@@ -331,7 +336,6 @@ comment_save($comment);
  * Implements hook_init().
  */
 function ORLounge_init() {
-
   if (drupal_is_cli() || drupal_installation_attempted()) {
     return;
   }
@@ -368,7 +372,7 @@ function ORLounge_init() {
  $gid = db_query("select gid from {og_membership} where entity_type = 'user' and group_type ='node' and state = 1 and etid =".$user->uid)->fetchfield();
         drupal_goto('node/'.$gid);
         }else if($join>1){
-          drupal_goto('group-list');
+          drupal_goto('group_list');
         }else{
           drupal_goto('welcome');
         }	   
@@ -455,7 +459,7 @@ function group_list_form(){
         $p_output = '';
 
        }
-	      $output .=  '<div class="custom-view-rows"><div class="field-title">'.$node->title.'</div>'.$images.'<div class="field-body">'.$node->body['und'][0]['value'].'</div>'.$p_output.'</div>'; 	
+	      $output .=  '<div class="custom-view-rows"><div class="field-title"><a href="/node/'.$node->nid.'">'.$node->title.'</a></div>'.$images.'<div class="field-body">'.$node->body['und'][0]['value'].'</div>'.$p_output.'</div>'; 	
 	} 
      }else{
     $group_arr = db_query("select gid from {og_membership} where entity_type = 'user' and group_type ='node' and state = 1 and etid =".$user->uid);
@@ -525,7 +529,7 @@ function group_list_form(){
         $p_output = '';
 
        }
-	       $output .=  '<div class="custom-view-rows"><div class="field-title">'.$node->title.'</div>'.$images.'<div class="field-body">'.$node->body['und'][0]['value'].'</div>'.$p_output.'</div>'; 
+	       $output .=  '<div class="custom-view-rows"><div class="field-title"><a href="/node/'.$node->nid.'">'.$node->title.'</a></div>'.$images.'<div class="field-body">'.$node->body['und'][0]['value'].'</div>'.$p_output.'</div>'; 
           }
      } 
   $build['header'] = array(
