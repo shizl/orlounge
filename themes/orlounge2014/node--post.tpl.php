@@ -4,7 +4,7 @@
     <div class="user-name"><?php $account = user_load($node->uid);  print $account->name; ?></div>
     <div class="post-body"><?php print $node->body['und'][0]['value']; ?></div>
     <div class="post-created"><?php print format_interval((time() - $node->created) , 2) . t(' ago') ?><span class="count_comment"> 
-    <?php $num = db_query('select count (distinct nid) from {comment} where nid =:nid',array(':nid'=>$node->nid))->fetchfield(); echo $num; ?>
+    <?php $num = db_query('select count (distinct uid) from {comment} where nid =:nid',array(':nid'=>$node->nid))->fetchfield(); echo $num; ?>
   people comment on this post </span></div>
   </div>
   <div class="post-comment">

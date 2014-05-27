@@ -60,11 +60,7 @@ function create_group_form($form,&$form_state){
     '#type'=>'select',
     '#options'=> array('US'=>'United States'),
   );
-  $form['hospital_location']['type'] = array(
-    '#title'=>t('Type'),
-    '#type'=>'select',
-    '#options'=>array('6'=>'Hospital','7'=>'Ambulatory Surgery Center'),
-  );
+
   $form['hospital_location']['state'] = array(
     '#title'=>t('State'),
     '#type'=>'select',
@@ -76,7 +72,11 @@ function create_group_form($form,&$form_state){
       'effect' => 'fade',
     ),
   );
-
+  $form['hospital_location']['type'] = array(
+    '#title'=>t('Type'),
+    '#type'=>'select',
+    '#options'=>array('6'=>'Hospital','7'=>'Ambulatory Surgery Center'),
+  );
   $default_hot = get_hospital_by_state();
   $form['hospital_location']['hospital'] = array(
     '#title'=>t('Hospital'),
@@ -156,7 +156,7 @@ function create_group_form_submit($form,&$form_state){
 	'type'=>$form_state['values']['hospital'],
 	))->execute(); 
 
-   drupal_set_message('Thank you! Please wait Management Audit.');
+   drupal_goto('create/access');
   }
 }
 
@@ -186,11 +186,7 @@ function join_group_form($form,&$form_state){
     '#type'=>'select',
     '#options'=> array('US'=>'United States'),
   );
-  $form['Join_Form']['type'] = array(
-    '#title'=>t('Type'),
-    '#type'=>'select',
-    '#options'=>array('6'=>'Hospital','7'=>'Ambulatory Surgery Center'),
-  );
+
   $form['Join_Form']['state'] = array(
     '#title'=>t('State'),
     '#type'=>'select',
@@ -202,7 +198,11 @@ function join_group_form($form,&$form_state){
       'effect' => 'fade',
     ),
   );
-
+  $form['Join_Form']['type'] = array(
+    '#title'=>t('Type'),
+    '#type'=>'select',
+    '#options'=>array('6'=>'Hospital','7'=>'Ambulatory Surgery Center'),
+  );
   $default_hot = get_join_group();
   $form['Join_Form']['hospital'] = array(
     '#title'=>t('Hospital'),

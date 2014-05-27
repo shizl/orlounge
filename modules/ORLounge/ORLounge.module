@@ -17,12 +17,14 @@ function ORLounge_menu(){
      'access callback' =>'access_login_user',
      'file'=>'group.inc',
   );
-  
    $items['welcome'] = array(
      'page callback'=>'registration_welcome',
      'access arguments' => array('access content'),	
     );
-
+   $items['create/access'] = array(
+     'page callback'=>'create_group_access',
+     'access callback' => true,
+   );
 
   return $items;
 }
@@ -409,7 +411,7 @@ function group_list_form(){
               $img = db_query('SELECT filename FROM {file_managed} where fid='.$post->picture)->fetchfield();
               $picture = '<img width="50" height="50"  src="/sites/default/files/pictures/'.$img.'">';
             }
-           $num = db_query('select count (distinct nid) from {comment} where nid =:nid',array(':nid'=>$post->nid))->fetchfield();
+           $num = db_query('select count (distinct uid) from {comment} where nid =:nid',array(':nid'=>$post->nid))->fetchfield();
 
  $comment_body = db_query('select comment_body_value,entity_id from {field_data_comment_body} where entity_id in (select cid from {comment} where nid = :nid)',array(':nid'=>$post->nid));
  $c_output = '';
@@ -465,7 +467,7 @@ function group_list_form(){
     $group_arr = db_query("select gid from {og_membership} where entity_type = 'user' and group_type ='node' and state = 1 and etid =".$user->uid);
           foreach($group_arr as $group){
                $node= node_load($group->gid);
-
+     if($node->status==1){
  if(!empty($node->field_group_logo['und'][0]['filename'])){
                 $images = '<div class="field-image"><img src="/sites/default/files/'.$node->field_group_logo['und'][0]['filename'].' "/></div>';
               }else{
@@ -481,7 +483,7 @@ function group_list_form(){
               $img = db_query('SELECT filename FROM {file_managed} where fid='.$post->picture)->fetchfield();
               $picture = '<img width="50" height="50"  src="/sites/default/files/pictures/'.$img.'">';
             }
-           $num = db_query('select count (distinct nid) from {comment} where nid =:nid',array(':nid'=>$post->nid))->fetchfield();
+           $num = db_query('select count (distinct uid) from {comment} where nid =:nid',array(':nid'=>$post->nid))->fetchfield();
 
  $comment_body = db_query('select comment_body_value,entity_id from {field_data_comment_body} where entity_id in (select cid from {comment} where nid = :nid)',array(':nid'=>$post->nid));
  $c_output = '';
@@ -531,6 +533,7 @@ function group_list_form(){
        }
 	       $output .=  '<div class="custom-view-rows"><div class="field-title"><a href="/node/'.$node->nid.'">'.$node->title.'</a></div>'.$images.'<div class="field-body">'.$node->body['und'][0]['value'].'</div>'.$p_output.'</div>'; 
           }
+       }
      } 
   $build['header'] = array(
     '#prefix' => '<div class="view-header">',
@@ -564,7 +567,7 @@ function override_commons_post_node_form($form,&$form_state){
      }else{
     $group_arr = db_query("select gid from {og_membership} where entity_type = 'user' and group_type ='node' and state = 1 and etid =".$user->uid);
           foreach($group_arr as $group){
-		 $group_title = db_query("select title from {node} where type ='group' and nid =".$group->gid)->fetchfield();
+		 $group_title = db_query("select title from {node} where type ='group' and status=1 and nid =".$group->gid)->fetchfield();
 		$options[$group->gid] = $group_title;
           }
      } 
@@ -643,5 +646,12 @@ $newNode = (object) NULL;
   ->execute();
 drupal_set_message(t('Post '.$title.' has been created.'));
 
+}
+
+function create_group_access(){
+ $page['page'] = array(
+   '#markup'=>t('<h2>Thank You!</h2> <div> this is a thank you page , your submit waitting for Management Audit. </div>'),
+ );
+ return $page;
 }
 
